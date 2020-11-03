@@ -76,7 +76,7 @@ class Player {
 			author: [track.author.name, track.author.avatar, track.author.channel_url], 
 			description: track.shortDescription.substring(0, 122) + "...", 
 			thumbnail: track.thumbnail.thumbnails[track.thumbnail.thumbnails.length-1]?.url, 
-			footer: [Helper.secsToString(track.lengthSeconds), track.author.avatar]
+			footer: [Helper.readableSeconds(track.lengthSeconds), track.author.avatar]
 		});
 	}
 

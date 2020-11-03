@@ -7,7 +7,6 @@ const COMMANDS_DATA = require("../commands/Commands.js");
  */
 class CommandHandler {
 
-
 	constructor(message) {
 		this.message = message;
 		this.content = message.content.trim();
@@ -20,15 +19,10 @@ class CommandHandler {
 
 
 	/**
-	 * Checks if the message was a bot command
+	 * Returns true if the message was not a bot message and it started with the prefix
 	 */
 	isValidCommand() {
-			
-		// Ignore messages from the bot itself and check if message starts with the prefix
-		if (this.message.author.bot) return;
-		if (!this.content.startsWith(PREFIX)) return;
-
-		return true;
+		return !this.message.author.bot && this.content.startsWith(PREFIX);
 	}
 
 

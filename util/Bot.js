@@ -7,7 +7,6 @@ class Bot {
 	constructor(client) {
 		this.client = client;
 		this.guildPlayers = new Map();
-
 		this.bindOnMessage();
 	}
 
@@ -36,10 +35,7 @@ class Bot {
 	 */
 	getPlayer(guild) {
 		const player = this.guildPlayers.get(guild);
-
-		if (!player) 
-			this.guildPlayers.set(guild, new Player(guild));
-		
+		if (!player) this.guildPlayers.set(guild, new Player(guild));
 		return this.guildPlayers.get(guild);
 	}
 
@@ -49,12 +45,11 @@ class Bot {
 	 */
 	bindOnMessage() {
 		this.client.on("message", (message) => {
-
 			const commandHandler = new CommandHandler(message);
 
-			// Check if command is valid and execute the command
-			if (!commandHandler.isValidCommand()) return;
-			commandHandler.executeCommand();
+			// Execute the command if it is valid
+			if (commandHandler.isValidCommand()) 
+				commandHandler.executeCommand();
 		});
 	}
 }
