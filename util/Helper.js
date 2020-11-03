@@ -1,13 +1,17 @@
 
 const DISCORD = require("discord.js");
 
-module.exports = {
-	isValidPrefix: function (prefix) {
+
+class Helper {
+	constructor() {}
+
+	static isValidPrefix(prefix) {
 
 		// Don't allow any whitespace characters
 		return /^[^\s]+$/g.test(prefix);
-	},
-	canBotPlay: function (message) {
+	}
+
+	static canBotPlay(message) {
 
 		// Check if user is in voice channel
 		const voiceChannel = message.member.voice.channel;
@@ -30,8 +34,9 @@ module.exports = {
 		}
 
 		return true;
-	},
-	createEmbed: function ({title, url, author, desc, thumb, footer}) {
+	}
+
+	static createEmbed({title, url, author, desc, thumb, footer}) {
 		let embed = new DISCORD.MessageEmbed()
 			.setColor("#6441a5")
 			.setTitle(title)
@@ -44,8 +49,9 @@ module.exports = {
 		if (thumb !== "")
 			embed.setImage(thumb)
 		return embed;
-	},
-	createQueueEmbeds(songs) {
+	}
+
+	static createQueueEmbeds(songs) {
 		let embed = new DISCORD.MessageEmbed()
 			.setColor("#6441a5")
 			.setTitle("Current Playlist");
@@ -65,8 +71,9 @@ module.exports = {
 	
 		return embed;
 	}
-,	  
-	secsToString: function (s) {
+
+
+	static secsToString(s) {
 		let secs = parseInt(s);
 		let mins = Math.floor(secs / 60);
 		secs -= mins * 60;
@@ -74,5 +81,7 @@ module.exports = {
 		mins -= hs * 60;
 		return (hs > 0 ? (hs + "h ") : "") + (mins > 0 ? (mins + "m ") : "") + (secs > 0 ? (secs + "s") : "");
 	}
-	  
+
 }
+
+module.exports = Helper;

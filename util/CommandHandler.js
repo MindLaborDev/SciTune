@@ -1,6 +1,6 @@
 
 const { PREFIX } = require("./../config.json");
-const commands = require("../commands/Commands.js");
+const COMMANDS_DATA = require("../commands/Commands.js");
 
 /**
  * Handles bot commands
@@ -8,53 +8,59 @@ const commands = require("../commands/Commands.js");
 class CommandHandler {
 
 
-	constructor(client, songs) {
-		this.client = client;
-		this.currentMessage;
-		this.songs = songs;
+	constructor(message) {
+		this.message = message;
+		this.content = message.content.trim();
+		this.messageData = this.parseCommand();
+		this.voiceChannel = this.message.member.voice.channel;
+		this.textChannel = this.message.channel;
+		this.botUser = this.message.client.user;
+		this.guild = this.message.guild.id;
 	}
 
 
 	/**
-	 * Listens for messages
+	 * Checks if the message was a bot command
 	 */
-	listen() {
-
-		this.client.on("message", async message => {
-
-			this.currentMessage = message;
-			let content = message.content.trim();
+	isValidCommand() {
 			
-			// Ignore messages from the bot itself
-			if (message.author.bot)
-				return;
+		// Ignore messages from the bot itself and check if message starts with the prefix
+		if (this.message.author.bot) return;
+		if (!this.content.startsWith(PREFIX)) return;
 
-			// Check if message starts with prefix
-			if (!content.startsWith(PREFIX)) 
-				return;
+		return true;
+	}
 
-			// Handle the command
-			this.executeCommand(content);
-		});
+
+	/**
+	 * Checks if the command actually exists
+	 */
+	doesCommandExist() {
+		return Boolean(this.getCommandData());
+	}
+
+
+	/**
+	 * Get the command data of the current command specified in Commands.js
+	 */
+	getCommandData() {
+		return COMMANDS_DATA.find(c => c.commands.includes(this.messageData.command));
 	}
 
 
 	/**
 	 * Execute the commands
-	 * @param {string} commandMsg The user input
 	 */
-	executeCommand(commandMsg) {
-
-		let command = this.parseCommand(commandMsg);
-		let cmd = commands.find(e => e.commands.includes(command["command"]));
+	executeCommand() {
 
 		// If there is no such command return
-		if (!cmd) {
-			this.currentMessage.channel.send("Command not found! Typo?");
+		if (!this.doesCommandExist()) {
+			this.message.channel.send("Command not found. Typo?");
 			return;
-		} 
+		}
 
-		cmd.callback(command, this.currentMessage, this.songs);
+		// Execute function in the current command handler scope 
+		this.getCommandData().callback.call(this);
 	}
 
 
@@ -63,19 +69,20 @@ class CommandHandler {
 	 * 
 	 * @param {string} commandMsg The user input
 	 */
-	parseCommand(commandMsg) {
-		let command = {};
+	parseCommand() {
+		let message = {};
 
 		// If command has arguments
-		if (commandMsg.includes(" ")) {
-			let firstArgSeparator = commandMsg.indexOf(" ");
-			command["command"] = commandMsg.substring(PREFIX.length, firstArgSeparator);
-			command["arguments"] = commandMsg.substring(firstArgSeparator + 1).trim().split(" ");
-			return command;
+		if (this.content.includes(" ")) {
+			const firstArgSeparator = this.content.indexOf(" ");
+
+			message.command = this.content.substring(PREFIX.length, firstArgSeparator);
+			message.arguments = this.content.substring(firstArgSeparator + 1).trim().split(" ");
+			return message;
 		}
 
-		command["command"] = commandMsg.substring(PREFIX.length);
-		return command;
+		message.command = this.content.substring(PREFIX.length);
+		return message;
 	}
 
 }
