@@ -1,6 +1,7 @@
 
 const { PREFIX } = require("../config.json");
 const Commands = require("../commands/Commands.js");
+const Communication = require("./Communication");
 
 
 /**
@@ -62,8 +63,9 @@ class CommandMessage {
 
 		// If there is no such command return
 		const command = this.getCommand();
+		const sender = new Communication(this.getTextChannel());
 		if (!command) {
-			this.getTextChannel().send("Command not found. Typo?");
+			sender.error("Command not found", `I did not find that command! Typo?`);
 			return;
 		}
 
