@@ -1,6 +1,11 @@
 
 const DISCORD = require("discord.js");
 
+
+/**
+ * This class is used to communicate to the user using <DISCORD.MessageEmbed>. It makes it easier
+ * to reuse messages and keep the code much simpler.
+ */
 class Communication {
 
 	constructor(textChannel) {

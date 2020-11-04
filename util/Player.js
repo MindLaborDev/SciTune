@@ -3,6 +3,10 @@ const Communication = require("./Communication");
 const Helper = require("./Helper");
 const YTDL = require("ytdl-core");
 
+
+/**
+ * This class represents a player that streams audio into a voice channel and manages queues/playlists
+ */
 class Player {
 
 	constructor(guild) {

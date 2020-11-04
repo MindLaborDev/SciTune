@@ -2,6 +2,11 @@ const YTDL = require("ytdl-core");
 const CommandMessage = require("./CommandMessage");
 const Player = require("./Player");
 
+
+/**
+ * This class is used for functionality that belongs to the bot such as onmessage events, managing 
+ * players of guilds or connecting to a voice channel.
+ */
 class Bot {
 
 	constructor(client) {
@@ -37,7 +42,7 @@ class Bot {
 		});
 	}
 
-	
+
 	/**
 	 * Connects to a voice channel
 	 */

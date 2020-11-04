@@ -2,8 +2,10 @@
 const { PREFIX } = require("../config.json");
 const Commands = require("../commands/Commands.js");
 
+
 /**
- * Handles bot commands
+ * This class represents a user message and can parse it and execute the corresponding commands from
+ * Commands.js. It also holds helper functions that are related to the message (like getTextChannel() or getArguments()) 
  */
 class CommandMessage {
 
