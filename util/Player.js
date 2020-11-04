@@ -24,7 +24,7 @@ class Player {
 	/**
 	 * Starts playing the first track in the queue
 	 * 
-	 * @param {function} onFinish Calls when the player finished playing the track
+	 * @param {function} onFinish Calls when the player finished playing the queue
 	 */
 	play(onFinish) {
 
