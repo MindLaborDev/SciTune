@@ -39,7 +39,7 @@ class Player {
 		const track = this.queue[0];
 		const audioStream = YTDL(track.video_url);
 		const dispatcher = this.connection.play(audioStream);
-		this.dispatcher = this.setupDispatcher(dispatcher);
+		this.dispatcher = this.setupDispatcher(dispatcher, onFinish);
 		this.playing = true;
 
 		// Send message about the new track
@@ -67,10 +67,10 @@ class Player {
 	/**
 	 * Binds streaming events (like onfinish, onerror...) and sets streaming properties (like volume)
 	 */
-	setupDispatcher(dispatcher) {
+	setupDispatcher(dispatcher, onFinish) {
 		dispatcher.on("finish", () => {
 			this.queue.shift();
-			this.play();
+			this.play(onFinish);
 			this.playing = false;
 		});
 

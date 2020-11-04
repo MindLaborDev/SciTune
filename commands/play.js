@@ -9,7 +9,7 @@ module.exports = async function(message) {
 	const player = global.bot.getPlayer(guild);
 
 	// Check if song is requested
-	if (!arguments) 
+	if (!arguments.length) 
 		return textChannel.send(`Usage: ${PREFIX}play [Link or id]`);
 	
 	// Make sure the user is in a voice channel
