@@ -16,7 +16,7 @@ module.exports = async function(message) {
 	
 	// Make sure the user is in a voice channel
 	if (!voiceChannel) 
-		return sender.error("Error", `You need to be in a voice channel to play music!`);
+		return sender.error("Error", `You have to be in a voice channel to play music!`);
 
 	// Check if bot has permissions to join and speak
 	
