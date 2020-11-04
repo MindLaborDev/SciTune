@@ -1,3 +1,4 @@
+const { PREFIX } = require("../config.json");
 const YTDL = require("ytdl-core");
 const CommandMessage = require("./CommandMessage");
 const Player = require("./Player");
@@ -9,9 +10,8 @@ const Player = require("./Player");
  */
 class Bot {
 
-	constructor(client) {
+	constructor() {
 		this.guildPlayers = new Map();
-		this.client = client;
 	}
 
 	
@@ -28,7 +28,7 @@ class Bot {
 	 * When ready: Bind listeners and handlers
 	 */
 	onReady() {
-		client.user.setActivity(`${PREFIX}play`, { type : "LISTENING" });
+		global.client.user.setActivity(`${PREFIX}play`, { type : "LISTENING" });
 	}
 
 
@@ -46,7 +46,7 @@ class Bot {
 	/**
 	 * Connects to a voice channel
 	 */
-	async connect(guild, voiceChannel) {
+	async connect(guild, voiceChannel, textChannel) {
 
 		const player = this.getPlayer(guild);
 		if (player.isConnected()) {
@@ -56,6 +56,7 @@ class Bot {
 
 		try {
 			player.voiceChannel = voiceChannel;
+			player.textChannel = textChannel;
 			player.connection = await player.voiceChannel.join();
 		} catch (error) {
 			console.error(error);

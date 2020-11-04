@@ -30,7 +30,7 @@ class Player {
 
 		// Check if connection is set and the queue is not empty 
 		if (!this.isConnected()) return;
-		if (this.queue.length) {
+		if (!this.queue.length) {
 			onFinish();
 			return;
 		} 
@@ -43,14 +43,7 @@ class Player {
 		this.playing = true;
 
 		// Send message about the new track
-		new Communication(this.textChannel).newTrackHasStarted({
-			title: track.title, 
-			url: track.video_url, 
-			author: [track.author.name, track.author.avatar, track.author.channel_url], 
-			description: track.shortDescription.substring(0, 122) + "...", 
-			thumbnail: track.thumbnail.thumbnails[track.thumbnail.thumbnails.length-1]?.url, 
-			footer: [Helper.readableSeconds(track.lengthSeconds), track.author.avatar]
-		});
+		new Communication(this.textChannel).newTrackHasStarted(track);
 	}
 
 
@@ -104,15 +97,6 @@ class Player {
 	 */
 	isConnected() {
 		return Boolean(this.connection);
-	}
-
-
-	/**
-	 * Checks if the bot can play tracks in the voice channel
-	 */
-	hasPermissions(bot) {
-		const permissions = this.voiceChannel.permissionsFor(bot);
-		return permissions.has("SPEAK") && permissions.has("CONNECT");
 	}
 }
 

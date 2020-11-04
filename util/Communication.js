@@ -1,5 +1,6 @@
 
 const DISCORD = require("discord.js");
+const Helper = require("./Helper");
 
 
 /**
@@ -20,13 +21,12 @@ class Communication {
 
 		// Build embed
 		let embed = new DISCORD.MessageEmbed().setColor("#6441a5");
-		if (track.title) embed.setTitle(track.title);
-		if (track.url) embed.setURL(track.url);
-		if (track.thumbnail) embed.setImage(track.thumbnail);
-		if (track.author.length) embed.setAuthor(...track.author);
-		if (track.description) embed.setDescription(track.description);
-		if (track.timestamp) embed.setTimestamp();
-		if (track.footer.length) embed.setFooter(...track.footer);
+		embed.setTitle(track.title);
+		embed.setURL(track.video_url);
+		embed.setImage(track.thumbnail.thumbnails[track.thumbnail.thumbnails.length-1]?.url);
+		embed.setAuthor(track.author.name, track.author.avatar, track.author.channel_url);
+		embed.setDescription(track.shortDescription.substring(0, 122) + "...");
+		embed.setFooter(Helper.readableSeconds(track.lengthSeconds), track.author.avatar);
 
 		// Send embed
 		this.textChannel.send(embed);

@@ -1,14 +1,15 @@
 
 
-module.exports = function () {
+module.exports = function (message) {
 
 	// Check if user is in voice channel
-	if (!this.message.member.voice.channel)
-		return this.message.channel.send("You have to be in a voice channel to stop the music!");
+	const voiceChannel = message.getVoiceChannelOfAuthor();
+	if (!voiceChannel)
+		return message.getTextChannel().send("You have to be in a voice channel to stop the music!");
 
-	const guild = this.getGuild();
+	const guild = message.getGuild();
 	const player = global.bot.getPlayer(guild);
 
-	player.stop();
 	player.queue = [];
+	player.stop();
 }
