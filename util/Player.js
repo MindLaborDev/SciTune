@@ -18,41 +18,6 @@ class Player {
 
 
 	/**
-	 * Setter for voice channel and text channel
-	 */
-	use(voiceChannel, textChannel) {
-		if (this.isConnected()) {
-			console.error("The bot is already connected to a voice channel!");
-			return;
-		}
-
-		this.voiceChannel = voiceChannel;
-		this.textChannel = textChannel;
-	}
-
-
-	/**
-	 * Connects to a voice channel
-	 */
-	async connect() {
-		try {
-			this.connection = await this.voiceChannel.join();
-			return this.connection;
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
-
-	/**
-	 * Disconnect from the voice channel
-	 */
-	disconnect() {
-		this.voiceChannel?.leave();
-	}
-
-
-	/**
 	 * Starts playing the first track in the queue
 	 * 
 	 * @param {function} onFinish Calls when the player finished playing the track

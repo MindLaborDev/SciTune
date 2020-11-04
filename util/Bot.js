@@ -5,13 +5,46 @@ const Player = require("./Player");
 class Bot {
 
 	constructor(client) {
-		this.client = client;
 		this.guildPlayers = new Map();
-		this.client.on("message", (message) => {
-			const commandHandler = new CommandMessage(message);
-			if (commandHandler.isValid()) 
-				commandHandler.execute();
+		client.on("message", (message) => {
+			const commandMessage = new CommandMessage(message);
+			if (commandMessage.isValid()) commandMessage.execute();
 		});
+	}
+
+
+	/**
+	 * Connects to a voice channel
+	 */
+	async connect(guild, voiceChannel) {
+
+		const player = this.getPlayer(guild);
+		if (player.isConnected()) {
+			console.error("The player is already connected!");
+			return;
+		}
+
+		try {
+			player.voiceChannel = voiceChannel;
+			player.connection = await player.voiceChannel.join();
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+
+	/**
+	 * Disconnect from the voice channel
+	 */
+	disconnect(guild) {
+		const player = this.getPlayer(guild);
+
+		if (!player.isConnected()) {
+			console.error("The player is already disconnected!");
+			return;
+		}
+
+		player.voiceChannel.leave();
 	}
 
 
