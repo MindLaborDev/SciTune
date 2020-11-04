@@ -1,26 +1,17 @@
 
 // Import dependencies
-const DISCORD = require("discord.js");
-const { TOKEN, PREFIX } = require("./config.json");
+const Discord = require("discord.js");
+const Config = require("./config.json");
 const Bot = require("./util/Bot.js");
+const client = new Discord.Client();
 
 
-// Login discord client
-const client = new DISCORD.Client();
-client.login(TOKEN);
+// Login and bind event listener on (ready, disconnect and message)
+global.bot = new Bot(client);
+client.login(Config.TOKEN);
+client.once("ready", global.bot.onReady);
+client.once("disconnect", global.bot.onDisconnect);
+client.on("message", global.bot.onMessage);
+global.client = client;
 
 
-// When ready: Bind listeners and handlers
-client.once("ready", () => {
-	global.bot = new Bot(client);
-	client.user.setActivity(`${PREFIX}play`, { type : "LISTENING" });
-});
-
-
-// Disconnect from all player connections on shutdown
-client.once("disconnect", () => {
-	global.bot.guildPlayers.forEach(player => {
-		player.stop();
-		player.disconnect();
-	});
-});

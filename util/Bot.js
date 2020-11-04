@@ -6,13 +6,38 @@ class Bot {
 
 	constructor(client) {
 		this.guildPlayers = new Map();
-		client.on("message", (message) => {
-			const commandMessage = new CommandMessage(message);
-			if (commandMessage.isValid()) commandMessage.execute();
-		});
+		this.client = client;
+	}
+
+	
+	/**
+	 * Is called when the bot recieves a message
+	 */
+	onMessage(message) {
+		const commandMessage = new CommandMessage(message);
+		if (commandMessage.isValid()) commandMessage.execute();
+	}
+
+	
+	/**
+	 * When ready: Bind listeners and handlers
+	 */
+	onReady() {
+		client.user.setActivity(`${PREFIX}play`, { type : "LISTENING" });
 	}
 
 
+	/**
+	 * Disconnect from all player connections on shutdown
+	 */
+	onDisconnect() {
+		global.bot.guildPlayers.forEach(player => {
+			player.stop();
+			player.disconnect();
+		});
+	}
+
+	
 	/**
 	 * Connects to a voice channel
 	 */
