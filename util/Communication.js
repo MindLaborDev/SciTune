@@ -20,7 +20,7 @@ class Communication {
 	newTrackHasStarted(track) {
 
 		// Build embed
-		let embed = new DISCORD.MessageEmbed().setColor("#6441a5");
+		let embed = new DISCORD.MessageEmbed().setColor("#6c5ce7");
 		embed.setTitle(track.title);
 		embed.setURL(track.video_url);
 		embed.setImage(track.thumbnail.thumbnails[track.thumbnail.thumbnails.length-1]?.url);
@@ -31,6 +31,28 @@ class Communication {
 		// Send embed
 		this.textChannel.send(embed);
 	}
+
+
+	/**
+	 * Sends an error embed
+	 */
+	error(title, message) {
+		let embed = new DISCORD.MessageEmbed().setColor("#d63031");
+		embed.addField("❌ " + title, message, true);
+		this.textChannel.send(embed);
+	}
+
+
+	/**
+	 * Sends an information embed
+	 */
+	info(title, message) {
+		let embed = new DISCORD.MessageEmbed().setColor("#0984e3");
+		embed.addField("ℹ️ " + title, message);
+		this.textChannel.send(embed);
+	}
+
+	
 }
 
 module.exports = Communication;
