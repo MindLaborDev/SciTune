@@ -69,13 +69,8 @@ class Bot {
 	 */
 	disconnect(guild) {
 		const player = this.getPlayer(guild);
-
-		if (!player.isConnected()) {
-			console.error("The player is already disconnected!");
-			return;
-		}
-
 		player.voiceChannel.leave();
+		player.connection = null;
 	}
 
 
