@@ -1,6 +1,5 @@
 
 const Communication = require("./Communication");
-const Helper = require("./Helper");
 const YTDL = require("ytdl-core");
 
 
