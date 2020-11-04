@@ -45,9 +45,17 @@ class Player {
 
 
 	/**
+	 * Disconnect from the voice channel
+	 */
+	disconnect() {
+		this.voiceChannel?.leave();
+	}
+
+
+	/**
 	 * Starts playing the first track in the queue
 	 * 
-	 * @param {function} onFinish Calls when the playere finished playing the track
+	 * @param {function} onFinish Calls when the player finished playing the track
 	 */
 	play(onFinish) {
 

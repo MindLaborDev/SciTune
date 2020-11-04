@@ -13,10 +13,14 @@ client.login(TOKEN);
 // When ready: Bind listeners and handlers
 client.once("ready", () => {
 	global.bot = new Bot(client);
-	
 	client.user.setActivity(`${PREFIX}play`, { type : "LISTENING" });
 });
 
 
-// Disconnect from all connections and shutdown bot
-client.once("disconnect", () => {});
+// Disconnect from all player connections on shutdown
+client.once("disconnect", () => {
+	global.bot.guildPlayers.forEach(player => {
+		player.stop();
+		player.disconnect();
+	});
+});
