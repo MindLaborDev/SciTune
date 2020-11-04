@@ -3,9 +3,9 @@ const play = require('./play');
 const stop = require('./stop');
 
 module.exports = [{
-	commands: ["p", "play"],
-	callback: play
+	aliases: ["p", "play"],
+	execute: play
 },{
-	commands: ["stop"],
-	callback: stop
+	aliases: ["stop"],
+	execute: stop
 }]

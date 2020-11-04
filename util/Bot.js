@@ -1,5 +1,5 @@
 const YTDL = require("ytdl-core");
-const CommandHandler = require("./CommandHandler");
+const CommandMessage = require("./CommandMessage");
 const Player = require("./Player");
 
 class Bot {
@@ -7,7 +7,11 @@ class Bot {
 	constructor(client) {
 		this.client = client;
 		this.guildPlayers = new Map();
-		this.bindOnMessage();
+		this.client.on("message", (message) => {
+			const commandHandler = new CommandMessage(message);
+			if (commandHandler.isValid()) 
+				commandHandler.execute();
+		});
 	}
 
 
@@ -23,7 +27,6 @@ class Bot {
 			return infos.videoDetails;
 		} catch (err) {
 			console.error(err);
-			return;
 		}
 	}
 
@@ -37,20 +40,6 @@ class Bot {
 		const player = this.guildPlayers.get(guild);
 		if (!player) this.guildPlayers.set(guild, new Player(guild));
 		return this.guildPlayers.get(guild);
-	}
-
-
-	/**
-	 * Bind the onmessage event (when the bot receives a message)
-	 */
-	bindOnMessage() {
-		this.client.on("message", (message) => {
-			const commandHandler = new CommandHandler(message);
-
-			// Execute the command if it is valid
-			if (commandHandler.isValidCommand()) 
-				commandHandler.executeCommand();
-		});
 	}
 }
 

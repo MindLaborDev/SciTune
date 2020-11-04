@@ -1,31 +1,41 @@
 const { PREFIX } = require("./../config.json");
 
-module.exports = async function() {
+module.exports = async function(message) {
 	
-	const bot = global.bot;
-	if (!this.messageData.arguments) {
-		this.textChannel.send(`Usage: ${PREFIX}play [Link or id]`);
-		return;
-	}
+	const arguments = message.getArguments();
+	const textChannel = message.getTextChannel();
+	const voiceChannel = message.getVoiceChannelOfAuthor();
+	const player = global.bot.getPlayer(message.getGuild());
+
+	// Check if song is requested
+	if (!arguments) 
+		return textChannel.send(`Usage: ${PREFIX}play [Link or id]`);
 	
-	const query = this.messageData.arguments.join(" ");
-	const trackInfos = await bot.searchYT(query);
-	if (!trackInfos) {
-		this.textChannel.send(`I didn't find that song :/`);
-		return;
+	// Make sure the user is in a voice channel
+	if (!voiceChannel) 
+		return textChannel.send(`You need to be in a voice channel to play music!`);
+
+	// Check if bot has permissions to join and speak
+	if (!player.hasPermissions(message.message.client.user)) 
+		return textChannel.send(`I do not have the permissions to do that!`);
+	
+	// Get song data from YTDL
+	const track = arguments.join(" ");
+	const trackInfos = await global.bot.searchYT(track);
+	if (!trackInfos) 
+		return textChannel.send(`I didn't find that song :/`);
+
+	// Connect if player is not connected
+	if (!player.isConnected()) {
+		player.use(message.getVoiceChannelOfAuthor(), message.getTextChannel());
+		await player.connect();
 	}
 
-	const player = bot.getPlayer(this.guild);
-	const isConnected = player.isConnected();
-	if (!isConnected) {
-		player.use(this.voiceChannel, this.textChannel);
-		await player.connect(this.botUser);
-	}
-
+	// Add track to the queue
 	player.add(trackInfos);
-	if (!player.isPlaying()) 
-		player.play(() => {
-			this.textChannel.send(`There are no more songs in the queue`);
-		});
 
+	// Play song if the player doesn't play anything at this moment
+	if (!player.isPlaying())
+		player.play(() => message.getTextChannel().send(`There are no more songs in the queue`));
+	
 }

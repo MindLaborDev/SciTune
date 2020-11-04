@@ -1,5 +1,4 @@
 
-const Queue = require("./Queue");
 const Communication = require("./Communication");
 const Helper = require("./Helper");
 const YTDL = require("ytdl-core");
@@ -8,7 +7,7 @@ class Player {
 
 	constructor(guild) {
 		this.guild = guild;
-		this.queue = new Queue();
+		this.queue = [];
 		this.voiceChannel = null;
 		this.textChannel = null;
 		this.connection = null;
@@ -19,10 +18,10 @@ class Player {
 
 
 	/**
-	 * Setter for voice channel
+	 * Setter for voice channel and text channel
 	 */
 	use(voiceChannel, textChannel) {
-		if (this.connection) {
+		if (this.isConnected()) {
 			console.error("The bot is already connected to a voice channel!");
 			return;
 		}
@@ -35,10 +34,7 @@ class Player {
 	/**
 	 * Connects to a voice channel
 	 */
-	async connect(bot) {
-		if (this.connection) return;
-		if (!this.hasPermissions(bot)) return;
-
+	async connect() {
 		try {
 			this.connection = await this.voiceChannel.join();
 			return this.connection;
@@ -56,15 +52,15 @@ class Player {
 	play(onFinish) {
 
 		// Check if connection is set and the queue is not empty 
-		if (!this.connection) return;
-		if (this.queue.isEmpty()) {
+		if (!this.isConnected()) return;
+		if (this.queue.length) {
 			onFinish();
 			return;
 		} 
 
 		// Create & stream the audio stream
-		const track = this.queue.first();
-		const audioStream = this.createAudioStream(track.video_url);
+		const track = this.queue[0];
+		const audioStream = YTDL(track.video_url);
 		const dispatcher = this.connection.play(audioStream);
 		this.dispatcher = this.setupDispatcher(dispatcher);
 		this.playing = true;
@@ -94,7 +90,7 @@ class Player {
 	 * Adds a track to the queue
 	 */
 	add(track) {
-		this.queue.tracks.push(track);
+		this.queue.push(track);
 	}
 
 
@@ -103,7 +99,7 @@ class Player {
 	 */
 	setupDispatcher(dispatcher) {
 		dispatcher.on("finish", () => {
-			this.queue.removeFirst();
+			this.queue.shift();
 			this.play();
 			this.playing = false;
 		});
@@ -115,16 +111,6 @@ class Player {
 
 		dispatcher.setVolumeLogarithmic(this.volume / 10);
 		return dispatcher;
-	}
-
-
-	/**
-	 * Creates an audio stream
-	 * 
-	 * @param {string} url The youtube video url
-	 */
-	createAudioStream(url) {
-		return YTDL(url, { quality: "highestaudio" });
 	}
 
 
@@ -148,41 +134,9 @@ class Player {
 	 * Checks if the bot can play tracks in the voice channel
 	 */
 	hasPermissions(bot) {
-		return this.isUserInVoiceChannel() &&
-				this.canConnect(bot) &&
-				this.canSpeak(bot);
-	}
-
-
-	/**
-	 * Checks if the user is in the voice channel.
-	 */
-	isUserInVoiceChannel() {
-		return Boolean(this.voiceChannel);
-	}
-	
-
-	/**
-	 * Check if the bot has permission to join the voice channel
-	 * 
-	 * @param {ClientUser} bot The client user of the bot. (message.client.user)
-	 */
-	canConnect(bot) {
 		const permissions = this.voiceChannel.permissionsFor(bot);
-		return permissions.has("CONNECT");
+		return permissions.has("SPEAK") && permissions.has("CONNECT");
 	}
-
-
-	/**
-	 * Check if the bot has permission to speak in the voice channel
-	 * 
-	 * @param {ClientUser} bot The client user of the bot. (message.client.user)
-	 */
-	canSpeak(bot) {
-		const permissions = this.voiceChannel.permissionsFor(bot);
-		return permissions.has("SPEAK");
-	}
-
 }
 
 module.exports = Player;
