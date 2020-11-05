@@ -21,7 +21,7 @@ class Communication {
 
 		// Build embed
 		let embed = new DISCORD.MessageEmbed().setColor("#6c5ce7");
-		embed.setTitle(track.title);
+		embed.setTitle("🎵 " + track.title);
 		embed.setURL(track.video_url);
 		embed.setImage(track.thumbnail.thumbnails[track.thumbnail.thumbnails.length-1]?.url);
 		embed.setAuthor(track.author.name, track.author.avatar, track.author.channel_url);
@@ -49,6 +49,14 @@ class Communication {
 	info(title, message) {
 		let embed = new DISCORD.MessageEmbed().setColor("#0984e3");
 		embed.addField("ℹ️ " + title, message);
+		this.textChannel.send(embed);
+	}
+
+
+	message(title, messages) {
+		let embed = new DISCORD.MessageEmbed().setColor("#6c5ce7").setTitle(title);
+		for (let i in messages)
+			embed.addField((+i+1) + ": " + messages[i].title, messages[i].description);
 		this.textChannel.send(embed);
 	}
 
